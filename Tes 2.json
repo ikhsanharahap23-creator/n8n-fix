@@ -1,5 +1,5 @@
 {
-  "name": "Tes 2",
+  "name": "Asisten AI",
   "nodes": [
     {
       "parameters": {
@@ -78,7 +78,7 @@
         "promptType": "define",
         "text": "={{$json.text || $json.message?.text}}\n",
         "options": {
-          "systemMessage": "You are an assistant that answers questions about Indonesian government HSSE regulations, Permen/PP, and construction specifications. Cite document names and sections when possible. If not found, say \"Tidak ditemukan di dokumen yang tersedia.\""
+          "systemMessage": "PERAN & LINGKUP\nAnda adalah asisten proyek konstruksi yang ahli di regulasi HSSE Indonesia, manajemen kontrak, dan analisis laporan progres proyek. \nJawaban Anda harus berlandaskan dokumen yang tersedia melalui retrieval (RAG): regulasi (UU/PP/Permen/Permenaker/Permen PUPR/Kepmen), kontrak (Syarat Umum/Khusus, BoQ, spesifikasi), dan laporan progres (harian/mingguan/bulanan, kurva-S, EVM, risiko, issue log).\n\nATURAN DASAR\n1) Grounding: gunakan informasi dari dokumen yang ditemukan oleh retrieval. Jangan mengarang atau menyebut pasal/angka tanpa sumber.\n2) Sitasi wajib bila ada rujukan: tulis [Nama Dokumen, Bagian/Clause/Pasal/Hal/Section/Butir] setelah pernyataan terkait. \n   Contoh: [Permen PUPR 10/2021, Pasal 6] atau [Kontrak EPC-01, GCC 4.1] atau [Laporan Progres Sep-2025, hlm 7].\n3) Jika tidak ada dokumen relevan ditemukan, jawab: **“Tidak ditemukan di dokumen yang tersedia.”**\n   Jika memungkinkan, sebutkan kata kunci yang Anda cari agar pengguna tahu apa yang belum ada (tanpa meminta balasan).\n4) Bahasa: gunakan Bahasa Indonesia formal, ringkas, dan tegas. Gunakan satuan SI.\n5) Jangan menampilkan proses berpikir (chain-of-thought). Tampilkan hanya hasil, perhitungan, dan referensi.\n\nPOLA JAWABAN (pilih sesuai konteks pertanyaan):\nA. Tanya aturan/HSSE/spesifikasi:\n   - \"Ringkasan\": 2–4 kalimat inti jawaban.\n   - \"Dasar & Pasal\": bullet bernomor tiap pasal/ayat/clauses penting + sitasi.\n   - \"Implikasi Praktis\": apa kewajiban, larangan, bukti/rekaman yang harus disiapkan, dan sanksi bila ada.\n\nB. Tanya kontrak:\n   - \"Interpretasi Klausul\": jelaskan maksud klausul yang ditanya + sitasi.\n   - \"Hak & Kewajiban\": untuk Pemberi Kerja vs Kontraktor.\n   - \"Langkah Tindak\": apa yang harus dilakukan agar patuh (form, notifikasi, batas waktu).\n\nC. Analisis laporan progres & rekomendasi tindakan:\n   - Baca metrik seperti: rencana vs realisasi %complete, deviasi jadwal/biaya, SPI=CummEV/CummPV, CPI=CummEV/CummAC, tren kurva-S, bobot pekerjaan kritis.\n   - \"Diagnosis\": 3–6 poin temuan (mis. keterlambatan item kritis, backlog inspeksi, isu pasokan).\n   - \"Rekomendasi Prioritas (1–3)\" berbasis dampak vs upaya; setiap rekomendasi maksimal 2 kalimat dan operasional (mis. percepatan aktivitas di jalur kritis, tambah shift, ubah metode pengecoran, parallel procurement, penjadwalan ulang FAT).\n   - Jika data EVM tersedia, tampilkan SPI/CPI dan taksiran EAC/ETC dengan rumus yang digunakan (tanpa menampilkan langkah pikir panjang).\n\nD. Risiko & HSSE:\n   - Gunakan pendekatan HIRARC sederhana: Bahaya → Konsekuensi → Kemungkinan → Pengendalian (Engineering/Admin/APD).\n   - Rekomendasi harus spesifik lokasi/aktivitas (mis. kerja di ketinggian, pengelasan, penggalian, listrik, crane).\n   - Jika ada pelanggaran dari dokumen, sebutkan klausul/pasal rujukan.\n\nFORMAT KELUARAN DEFAULT (maks 10 bullet agar nyaman di Telegram):\n1) **Jawaban Utama / Ringkasan**\n2) **Dasar Dokumen & Sitasi** (jika ada)\n3) **Temuan Kunci / Metrik** (untuk progres)\n4) **Rekomendasi Prioritas** (maks 3 butir, actionable)\n5) **Catatan** (batasan/kebutuhan data tambahan bila relevan)\n\nATURAN SITASI & KUALITAS\n- Gunakan nama dokumen resmi + bagian yang spesifik. Jika halaman/section tersedia dalam metadata, tampilkan.\n- Jika beberapa dokumen bertentangan, jelaskan perbedaannya secara netral dan dahulukan hierarki regulasi (UU > PP > Permen/Kepmen > Standar Teknis > Kontrak internal).\n- Jangan membuat sitasi palsu. Lebih baik kosong daripada salah.\n\nKESALAMATAN & DISKLAMER\n- Untuk isu keselamatan yang mendesak, sarankan tindakan mitigasi segera (contoh: hentikan pekerjaan, lakukan toolbox meeting, inspeksi peralatan) dengan dasar dokumen bila ada.\n- Anda bukan penasihat hukum; keluaran bersifat informasi teknis/operasional.\n\nKENDALI OUTPUT\n- Jika pertanyaan sangat umum, batasi jawaban ke 5–8 poin terpenting dan akhiri dengan saran kata kunci lanjutan (tanpa mengajukan pertanyaan).\n- Jika konteks dokumen tidak memadai, tampilkan “Tidak ditemukan di dokumen yang tersedia.” dan sebutkan data/informasi apa yang belum ada (mis. “kurva-S mingguan” atau “GCC Sub-Clause 14.x”).\n\n"
         }
       },
       "id": "ccb29622-49b2-4ae2-8b6a-7303a327e3e7",
@@ -99,8 +99,8 @@
       "name": "Vector Store Tool",
       "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
       "position": [
-        -96,
-        -80
+        -272,
+        -48
       ],
       "typeVersion": 1
     },
@@ -108,9 +108,9 @@
       "parameters": {
         "pineconeIndex": {
           "__rl": true,
+          "value": "company-hsse",
           "mode": "list",
-          "value": "company-files",
-          "cachedResultName": "company-files"
+          "cachedResultName": "company-hsse"
         },
         "options": {}
       },
@@ -118,8 +118,8 @@
       "name": "Pinecone Vector Store (Retrieval)",
       "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
       "position": [
-        -192,
-        96
+        -336,
+        112
       ],
       "typeVersion": 1,
       "credentials": {
@@ -135,7 +135,7 @@
       "name": "Embeddings Google Gemini (retrieval)",
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "position": [
-        -224,
+        -320,
         256
       ],
       "typeVersion": 1,
@@ -172,19 +172,6 @@
           "name": "Google Drive account"
         }
       }
-    },
-    {
-      "parameters": {
-        "content": "## Chat with company documents"
-      },
-      "id": "fa0d0661-d48d-481d-b615-ed868b0f5cca",
-      "name": "Sticky Note2",
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -496,
-        -480
-      ],
-      "typeVersion": 1
     },
     {
       "parameters": {
@@ -275,21 +262,6 @@
     },
     {
       "parameters": {
-        "content": "## Add docuemnts to vector store when updating or creating new documents in Google Drive",
-        "width": 320
-      },
-      "id": "b11dfd0f-2ef1-4426-9e1b-f95fc7e0b058",
-      "name": "Sticky Note",
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -480,
-        -1376
-      ],
-      "typeVersion": 1
-    },
-    {
-      "parameters": {
-        "modelName": "models/gemini-2.0-flash-exp",
         "options": {}
       },
       "id": "b1693864-7cb9-4745-90e1-d38a37aa812b",
@@ -309,15 +281,14 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-2.0-flash-exp",
         "options": {}
       },
       "id": "6db782d6-4f2a-450c-ba83-4d9cdbc9af9a",
       "name": "Google Gemini Chat Model (retrieval)",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        160,
-        96
+        176,
+        112
       ],
       "typeVersion": 1,
       "credentials": {
@@ -326,21 +297,6 @@
           "name": "Google Gemini(PaLM) Api account"
         }
       }
-    },
-    {
-      "parameters": {
-        "content": "## Set up steps\n\n1. Google Cloud Project and Vertex AI API:\n* Create a Google Cloud project.\n* Enable the Vertex AI API for your project.\n2. Google AI API Key:\n* Obtain a Google AI API key from Google AI Studio.\n3. Pinecone Account:\n* Create a free account on the Pinecone website.\nObtain your API key from your Pinecone dashboard.\n* Create an index named company-files in your Pinecone project.\n4. Google Drive:\n* Create a dedicated folder in your Google Drive where company documents will be stored.\n5. Credentials in n8n: Configure credentials in your n8n environment for:\n* Google Drive OAuth2\n* Google Gemini(PaLM) Api (using your Google AI API key)\n* Pinecone API (using your Pinecone API key)\n5. Import the Workflow:\n* Import this workflow into your n8n instance.\n6. Configure the Workflow:\n* Update both Google Drive Trigger nodes to watch the specific folder you created in your Google Drive.\n* Configure the Pinecone Vector Store nodes to use your company-files index.",
-        "height": 720,
-        "width": 420
-      },
-      "id": "900694fb-9a04-452f-a2c3-780e8485ed05",
-      "name": "Sticky Note1",
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -1472,
-        -912
-      ],
-      "typeVersion": 1
     },
     {
       "parameters": {
@@ -401,8 +357,8 @@
       "name": "Merge ChatId + Answer",
       "type": "n8n-nodes-base.merge",
       "position": [
-        -192,
-        -320
+        -176,
+        -304
       ],
       "typeVersion": 2,
       "alwaysOutputData": false
@@ -417,7 +373,7 @@
       "name": "Telegram Send",
       "type": "n8n-nodes-base.telegram",
       "position": [
-        0,
+        48,
         -304
       ],
       "typeVersion": 1,
@@ -611,7 +567,7 @@
   },
   "active": false,
   "settings": {},
-  "versionId": "350cf2aa-c65c-4d7a-952c-990c6649a076",
+  "versionId": "f27b2c54-1ebf-4800-8bd3-db797da2facf",
   "meta": {
     "templateId": "2753",
     "templateCredsSetupCompleted": true,
