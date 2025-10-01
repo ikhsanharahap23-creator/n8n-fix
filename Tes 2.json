@@ -48,16 +48,19 @@
       "parameters": {
         "dataType": "binary",
         "binaryMode": "specificField",
-        "options": {}
+        "options": {
+          "loader": "pdfjs"
+        }
       },
       "id": "630ca43c-f769-4ba2-bf0c-3fef465988e7",
-      "name": "Default Data Loader",
+      "name": "PDF Data Loader",
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "position": [
-        -80,
+         -272,
         -912
       ],
-      "typeVersion": 1
+      "typeVersion": 1,
+      "notes": "Uses pdfjs loader to extract text from downloaded PDFs."
     },
     {
       "parameters": {
@@ -78,8 +81,7 @@
         "promptType": "define",
         "text": "={{$json.text || $json.message?.text}}\n",
         "options": {
-          "systemMessage": "PERAN & LINGKUP\nAnda adalah asisten proyek konstruksi yang ahli di regulasi HSSE Indonesia, manajemen kontrak, dan analisis laporan progres proyek. \nJawaban Anda harus berlandaskan dokumen yang tersedia melalui retrieval (RAG): regulasi (UU/PP/Permen/Permenaker/Permen PUPR/Kepmen), kontrak (Syarat Umum/Khusus, BoQ, spesifikasi), dan laporan progres (harian/mingguan/bulanan, kurva-S, EVM, risiko, issue log).\n\nATURAN DASAR\n1) Grounding: gunakan informasi dari dokumen yang ditemukan oleh retrieval. Jangan mengarang atau menyebut pasal/angka tanpa sumber.\n2) Sitasi wajib bila ada rujukan: tulis [Nama Dokumen, Bagian/Clause/Pasal/Hal/Section/Butir] setelah pernyataan terkait. \n   Contoh: [Permen PUPR 10/2021, Pasal 6] atau [Kontrak EPC-01, GCC 4.1] atau [Laporan Progres Sep-2025, hlm 7].\n3) Jika tidak ada dokumen relevan ditemukan, jawab: **“Tidak ditemukan di dokumen yang tersedia.”**\n   Jika memungkinkan, sebutkan kata kunci yang Anda cari agar pengguna tahu apa yang belum ada (tanpa meminta balasan).\n4) Bahasa: gunakan Bahasa Indonesia formal, ringkas, dan tegas. Gunakan satuan SI.\n5) Jangan menampilkan proses berpikir (chain-of-thought). Tampilkan hanya hasil, perhitungan, dan referensi.\n\nPOLA JAWABAN (pilih sesuai konteks pertanyaan):\nA. Tanya aturan/HSSE/spesifikasi:\n   - \"Ringkasan\": 2–4 kalimat inti jawaban.\n   - \"Dasar & Pasal\": bullet bernomor tiap pasal/ayat/clauses penting + sitasi.\n   - \"Implikasi Praktis\": apa kewajiban, larangan, bukti/rekaman yang harus disiapkan, dan sanksi bila ada.\n\nB. Tanya kontrak:\n   - \"Interpretasi Klausul\": jelaskan maksud klausul yang ditanya + sitasi.\n   - \"Hak & Kewajiban\": untuk Pemberi Kerja vs Kontraktor.\n   - \"Langkah Tindak\": apa yang harus dilakukan agar patuh (form, notifikasi, batas waktu).\n\nC. Analisis laporan progres & rekomendasi tindakan:\n   - Baca metrik seperti: rencana vs realisasi %complete, deviasi jadwal/biaya, SPI=CummEV/CummPV, CPI=CummEV/CummAC, tren kurva-S, bobot pekerjaan kritis.\n   - \"Diagnosis\": 3–6 poin temuan (mis. keterlambatan item kritis, backlog inspeksi, isu pasokan).\n   - \"Rekomendasi Prioritas (1–3)\" berbasis dampak vs upaya; setiap rekomendasi maksimal 2 kalimat dan operasional (mis. percepatan aktivitas di jalur kritis, tambah shift, ubah metode pengecoran, parallel procurement, penjadwalan ulang FAT).\n   - Jika data EVM tersedia, tampilkan SPI/CPI dan taksiran EAC/ETC dengan rumus yang digunakan (tanpa menampilkan langkah pikir panjang).\n\nD. Risiko & HSSE:\n   - Gunakan pendekatan HIRARC sederhana: Bahaya → Konsekuensi → Kemungkinan → Pengendalian (Engineering/Admin/APD).\n   - Rekomendasi harus spesifik lokasi/aktivitas (mis. kerja di ketinggian, pengelasan, penggalian, listrik, crane).\n   - Jika ada pelanggaran dari dokumen, sebutkan klausul/pasal rujukan.\n\nFORMAT KELUARAN DEFAULT (maks 10 bullet agar nyaman di Telegram):\n1) **Jawaban Utama / Ringkasan**\n2) **Dasar Dokumen & Sitasi** (jika ada)\n3) **Temuan Kunci / Metrik** (untuk progres)\n4) **Rekomendasi Prioritas** (maks 3 butir, actionable)\n5) **Catatan** (batasan/kebutuhan data tambahan bila relevan)\n\nATURAN SITASI & KUALITAS\n- Gunakan nama dokumen resmi + bagian yang spesifik. Jika halaman/section tersedia dalam metadata, tampilkan.\n- Jika beberapa dokumen bertentangan, jelaskan perbedaannya secara netral dan dahulukan hierarki regulasi (UU > PP > Permen/Kepmen > Standar Teknis > Kontrak internal).\n- Jangan membuat sitasi palsu. Lebih baik kosong daripada salah.\n\nKESALAMATAN & DISKLAMER\n- Untuk isu keselamatan yang mendesak, sarankan tindakan mitigasi segera (contoh: hentikan pekerjaan, lakukan toolbox meeting, inspeksi peralatan) dengan dasar dokumen bila ada.\n- Anda bukan penasihat hukum; keluaran bersifat informasi teknis/operasional.\n\nKENDALI OUTPUT\n- Jika pertanyaan sangat umum, batasi jawaban ke 5–8 poin terpenting dan akhiri dengan saran kata kunci lanjutan (tanpa mengajukan pertanyaan).\n- Jika konteks dokumen tidak memadai, tampilkan “Tidak ditemukan di dokumen yang tersedia.” dan sebutkan data/informasi apa yang belum ada (mis. “kurva-S mingguan” atau “GCC Sub-Clause 14.x”).\n\n"
-        }
+                    "systemMessage": "PERAN & LINGKUP\nAnda adalah asisten proyek konstruksi yang ahli di regulasi HSSE Indonesia, manajemen kontrak, dan analisis laporan progres proyek. \nJawaban Anda harus berlandaskan dokumen yang tersedia melalui retrieval (RAG): regulasi (UU/PP/Permen/Permenaker/Permen PUPR/Kepmen), kontrak (Syarat Umum/Khusus, BoQ, spesifikasi), dan laporan progres (harian/mingguan/bulanan, kurva-S, EVM, risiko, issue log).\n\nATURAN DASAR\n1) Grounding: gunakan informasi dari dokumen yang ditemukan oleh retrieval. Jangan mengarang atau menyebut pasal/angka tanpa sumber.\n2) Sitasi wajib bila ada rujukan: tulis [Nama Dokumen, Bagian/Clause/Pasal/Hal/Section/Butir] setelah pernyataan terkait. \n   Contoh: [Permen PUPR 10/2021, Pasal 6] atau [Kontrak EPC-01, GCC 4.1] atau [Laporan Progres Sep-2025, hlm 7].\n3) Jika tidak ada dokumen relevan ditemukan, jawab: **\u201cTidak ditemukan di dokumen yang tersedia.\u201d**\n   Jika memungkinkan, sebutkan kata kunci yang Anda cari agar pengguna tahu apa yang belum ada (tanpa meminta balasan).\n4) Bahasa: gunakan Bahasa Indonesia formal, ringkas, dan tegas. Gunakan satuan SI.\n5) Jangan menampilkan proses berpikir (chain-of-thought). Tampilkan hanya hasil, perhitungan, dan referensi.\n\nPOLA JAWABAN (pilih sesuai konteks pertanyaan):\nA. Tanya aturan/HSSE/spesifikasi:\n   - \"Ringkasan\": 2\u20134 kalimat inti jawaban.\n   - \"Dasar & Pasal\": bullet bernomor tiap pasal/ayat/clauses penting + sitasi.\n   - \"Implikasi Praktis\": apa kewajiban, larangan, bukti/rekaman yang harus disiapkan, dan sanksi bila ada.\n\nB. Tanya kontrak:\n   - \"Interpretasi Klausul\": jelaskan maksud klausul yang ditanya + sitasi.\n   - \"Hak & Kewajiban\": untuk Pemberi Kerja vs Kontraktor.\n   - \"Langkah Tindak\": apa yang harus dilakukan agar patuh (form, notifikasi, batas waktu).\n\nC. Analisis laporan progres & rekomendasi tindakan:\n   - Baca metrik seperti: rencana vs realisasi %complete, deviasi jadwal/biaya, SPI=CummEV/CummPV, CPI=CummEV/CummAC, tren kurva-S, bobot pekerjaan kritis.\n   - \"Diagnosis\": 3\u20136 poin temuan (mis. keterlambatan item kritis, backlog inspeksi, isu pasokan).\n   - \"Rekomendasi Prioritas (1\u20133)\" berbasis dampak vs upaya; setiap rekomendasi maksimal 2 kalimat dan operasional (mis. percepatan aktivitas di jalur kritis, tambah shift, ubah metode pengecoran, parallel procurement, penjadwalan ulang FAT).\n   - Jika data EVM tersedia, tampilkan SPI/CPI dan taksiran EAC/ETC dengan rumus yang digunakan (tanpa menampilkan langkah pikir panjang).\n\nD. Risiko & HSSE:\n   - Gunakan pendekatan HIRARC sederhana: Bahaya \u2192 Konsekuensi \u2192 Kemungkinan \u2192 Pengendalian (Engineering/Admin/APD).\n   - Rekomendasi harus spesifik lokasi/aktivitas (mis. kerja di ketinggian, pengelasan, penggalian, listrik, crane).\n   - Jika ada pelanggaran dari dokumen, sebutkan klausul/pasal rujukan.\n\nFORMAT KELUARAN DEFAULT (maks 10 bullet agar nyaman di Telegram):\n1) **Jawaban Utama / Ringkasan**\n2) **Dasar Dokumen & Sitasi** (jika ada)\n3) **Temuan Kunci / Metrik** (untuk progres)\n4) **Rekomendasi Prioritas** (maks 3 butir, actionable)\n5) **Catatan** (batasan/kebutuhan data tambahan bila relevan)\n\nATURAN SITASI & KUALITAS\n- Gunakan nama dokumen resmi + bagian yang spesifik. Jika halaman/section tersedia dalam metadata, tampilkan.\n- Jika beberapa dokumen bertentangan, jelaskan perbedaannya secara netral dan dahulukan hierarki regulasi (UU > PP > Permen/Kepmen > Standar Teknis > Kontrak internal).\n- Jangan membuat sitasi palsu. Lebih baik kosong daripada salah.\n\nKESALAMATAN & DISKLAMER\n- Untuk isu keselamatan yang mendesak, sarankan tindakan mitigasi segera (contoh: hentikan pekerjaan, lakukan toolbox meeting, inspeksi peralatan) dengan dasar dokumen bila ada.\n- Anda bukan penasihat hukum; keluaran bersifat informasi teknis/operasional.\n\nKENDALI OUTPUT\n- Jika pertanyaan sangat umum, batasi jawaban ke 5\u20138 poin terpenting dan akhiri dengan saran kata kunci lanjutan (tanpa mengajukan pertanyaan).\n- Jika konteks dokumen tidak memadai, tampilkan \u201cTidak ditemukan di dokumen yang tersedia.\u201d dan sebutkan data/informasi apa yang belum ada (mis. \u201ckurva-S mingguan\u201d atau \u201cGCC Sub-Clause 14.x\u201d).\n\n"
       },
       "id": "ccb29622-49b2-4ae2-8b6a-7303a327e3e7",
       "name": "AI Agent",
@@ -385,6 +387,187 @@
         }
       }
     }
+    @@ -26,81 +26,84 @@
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "8a90a330-a8c8-4f76-99ab-ef310dec1443",
+      "name": "Embeddings Google Gemini",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "position": [
+        -272,
+        -864
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "d9cJAY9Ap1EeAMyT",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "binaryMode": "specificField",
+        "options": {}
+        "options": {
+          "loader": "pdfjs"
+        }
+      },
+      "id": "630ca43c-f769-4ba2-bf0c-3fef465988e7",
+      "name": "Default Data Loader",
+      "name": "PDF Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "position": [
+        -80,
+        -272,
+        -912
+      ],
+      "typeVersion": 1
+      "typeVersion": 1,
+      "notes": "Uses pdfjs loader to extract text from downloaded PDFs."
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 150,
+        "options": {}
+      },
+      "id": "99ed5b1d-32c5-461c-a714-89c9f2e3dc40",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "position": [
+        -96,
+        -720
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json.text || $json.message?.text}}\n",
+        "options": {
+          "systemMessage": "PERAN & LINGKUP\nAnda adalah asisten proyek konstruksi yang ahli di regulasi HSSE Indonesia, manajemen kontrak, dan analisis laporan progres proyek. \nJawaban Anda harus berlandaskan dokumen yang tersedia melalui retrieval (RAG): regulasi (UU/PP/Permen/Permenaker/Permen PUPR/Kepmen), kontrak (Syarat Umum/Khusus, BoQ, spesifikasi), dan laporan progres (harian/mingguan/bulanan, kurva-S, EVM, risiko, issue log).\n\nATURAN DASAR\n1) Grounding: gunakan informasi dari dokumen yang ditemukan oleh retrieval. Jangan mengarang atau menyebut pasal/angka tanpa sumber.\n2) Sitasi wajib bila ada rujukan: tulis [Nama Dokumen, Bagian/Clause/Pasal/Hal/Section/Butir] setelah pernyataan terkait. \n   Contoh: [Permen PUPR 10/2021, Pasal 6] atau [Kontrak EPC-01, GCC 4.1] atau [Laporan Progres Sep-2025, hlm 7].\n3) Jika tidak ada dokumen relevan ditemukan, jawab: **“Tidak ditemukan di dokumen yang tersedia.”**\n   Jika memungkinkan, sebutkan kata kunci yang Anda cari agar pengguna tahu apa yang belum ada (tanpa meminta balasan).\n4) Bahasa: gunakan Bahasa Indonesia formal, ringkas, dan tegas. Gunakan satuan SI.\n5) Jangan menampilkan proses berpikir (chain-of-thought). Tampilkan hanya hasil, perhitungan, dan referensi.\n\nPOLA JAWABAN (pilih sesuai konteks pertanyaan):\nA. Tanya aturan/HSSE/spesifikasi:\n   - \"Ringkasan\": 2–4 kalimat inti jawaban.\n   - \"Dasar & Pasal\": bullet bernomor tiap pasal/ayat/clauses penting + sitasi.\n   - \"Implikasi Praktis\": apa kewajiban, larangan, bukti/rekaman yang harus disiapkan, dan sanksi bila ada.\n\nB. Tanya kontrak:\n   - \"Interpretasi Klausul\": jelaskan maksud klausul yang ditanya + sitasi.\n   - \"Hak & Kewajiban\": untuk Pemberi Kerja vs Kontraktor.\n   - \"Langkah Tindak\": apa yang harus dilakukan agar patuh (form, notifikasi, batas waktu).\n\nC. Analisis laporan progres & rekomendasi tindakan:\n   - Baca metrik seperti: rencana vs realisasi %complete, deviasi jadwal/biaya, SPI=CummEV/CummPV, CPI=CummEV/CummAC, tren kurva-S, bobot pekerjaan kritis.\n   - \"Diagnosis\": 3–6 poin temuan (mis. keterlambatan item kritis, backlog inspeksi, isu pasokan).\n   - \"Rekomendasi Prioritas (1–3)\" berbasis dampak vs upaya; setiap rekomendasi maksimal 2 kalimat dan operasional (mis. percepatan aktivitas di jalur kritis, tambah shift, ubah metode pengecoran, parallel procurement, penjadwalan ulang FAT).\n   - Jika data EVM tersedia, tampilkan SPI/CPI dan taksiran EAC/ETC dengan rumus yang digunakan (tanpa menampilkan langkah pikir panjang).\n\nD. Risiko & HSSE:\n   - Gunakan pendekatan HIRARC sederhana: Bahaya → Konsekuensi → Kemungkinan → Pengendalian (Engineering/Admin/APD).\n   - Rekomendasi harus spesifik lokasi/aktivitas (mis. kerja di ketinggian, pengelasan, penggalian, listrik, crane).\n   - Jika ada pelanggaran dari dokumen, sebutkan klausul/pasal rujukan.\n\nFORMAT KELUARAN DEFAULT (maks 10 bullet agar nyaman di Telegram):\n1) **Jawaban Utama / Ringkasan**\n2) **Dasar Dokumen & Sitasi** (jika ada)\n3) **Temuan Kunci / Metrik** (untuk progres)\n4) **Rekomendasi Prioritas** (maks 3 butir, actionable)\n5) **Catatan** (batasan/kebutuhan data tambahan bila relevan)\n\nATURAN SITASI & KUALITAS\n- Gunakan nama dokumen resmi + bagian yang spesifik. Jika halaman/section tersedia dalam metadata, tampilkan.\n- Jika beberapa dokumen bertentangan, jelaskan perbedaannya secara netral dan dahulukan hierarki regulasi (UU > PP > Permen/Kepmen > Standar Teknis > Kontrak internal).\n- Jangan membuat sitasi palsu. Lebih baik kosong daripada salah.\n\nKESALAMATAN & DISKLAMER\n- Untuk isu keselamatan yang mendesak, sarankan tindakan mitigasi segera (contoh: hentikan pekerjaan, lakukan toolbox meeting, inspeksi peralatan) dengan dasar dokumen bila ada.\n- Anda bukan penasihat hukum; keluaran bersifat informasi teknis/operasional.\n\nKENDALI OUTPUT\n- Jika pertanyaan sangat umum, batasi jawaban ke 5–8 poin terpenting dan akhiri dengan saran kata kunci lanjutan (tanpa mengajukan pertanyaan).\n- Jika konteks dokumen tidak memadai, tampilkan “Tidak ditemukan di dokumen yang tersedia.” dan sebutkan data/informasi apa yang belum ada (mis. “kurva-S mingguan” atau “GCC Sub-Clause 14.x”).\n\n"
+          "systemMessage": "PERAN & LINGKUP\nAnda adalah asisten proyek konstruksi yang ahli di regulasi HSSE Indonesia, manajemen kontrak, dan analisis laporan progres proyek. \nJawaban Anda harus berlandaskan dokumen yang tersedia melalui retrieval (RAG): regulasi (UU/PP/Permen/Permenaker/Permen PUPR/Kepmen), kontrak (Syarat Umum/Khusus, BoQ, spesifikasi), dan laporan progres (harian/mingguan/bulanan, kurva-S, EVM, risiko, issue log).\n\nATURAN DASAR\n1) Grounding: gunakan informasi dari dokumen yang ditemukan oleh retrieval. Jangan mengarang atau menyebut pasal/angka tanpa sumber.\n2) Sitasi wajib bila ada rujukan: tulis [Nama Dokumen, Bagian/Clause/Pasal/Hal/Section/Butir] setelah pernyataan terkait. \n   Contoh: [Permen PUPR 10/2021, Pasal 6] atau [Kontrak EPC-01, GCC 4.1] atau [Laporan Progres Sep-2025, hlm 7].\n3) Jika tidak ada dokumen relevan ditemukan, jawab: **\u201cTidak ditemukan di dokumen yang tersedia.\u201d**\n   Jika memungkinkan, sebutkan kata kunci yang Anda cari agar pengguna tahu apa yang belum ada (tanpa meminta balasan).\n4) Bahasa: gunakan Bahasa Indonesia formal, ringkas, dan tegas. Gunakan satuan SI.\n5) Jangan menampilkan proses berpikir (chain-of-thought). Tampilkan hanya hasil, perhitungan, dan referensi.\n\nPOLA JAWABAN (pilih sesuai konteks pertanyaan):\nA. Tanya aturan/HSSE/spesifikasi:\n   - \"Ringkasan\": 2\u20134 kalimat inti jawaban.\n   - \"Dasar & Pasal\": bullet bernomor tiap pasal/ayat/clauses penting + sitasi.\n   - \"Implikasi Praktis\": apa kewajiban, larangan, bukti/rekaman yang harus disiapkan, dan sanksi bila ada.\n\nB. Tanya kontrak:\n   - \"Interpretasi Klausul\": jelaskan maksud klausul yang ditanya + sitasi.\n   - \"Hak & Kewajiban\": untuk Pemberi Kerja vs Kontraktor.\n   - \"Langkah Tindak\": apa yang harus dilakukan agar patuh (form, notifikasi, batas waktu).\n\nC. Analisis laporan progres & rekomendasi tindakan:\n   - Baca metrik seperti: rencana vs realisasi %complete, deviasi jadwal/biaya, SPI=CummEV/CummPV, CPI=CummEV/CummAC, tren kurva-S, bobot pekerjaan kritis.\n   - \"Diagnosis\": 3\u20136 poin temuan (mis. keterlambatan item kritis, backlog inspeksi, isu pasokan).\n   - \"Rekomendasi Prioritas (1\u20133)\" berbasis dampak vs upaya; setiap rekomendasi maksimal 2 kalimat dan operasional (mis. percepatan aktivitas di jalur kritis, tambah shift, ubah metode pengecoran, parallel procurement, penjadwalan ulang FAT).\n   - Jika data EVM tersedia, tampilkan SPI/CPI dan taksiran EAC/ETC dengan rumus yang digunakan (tanpa menampilkan langkah pikir panjang).\n\nD. Risiko & HSSE:\n   - Gunakan pendekatan HIRARC sederhana: Bahaya \u2192 Konsekuensi \u2192 Kemungkinan \u2192 Pengendalian (Engineering/Admin/APD).\n   - Rekomendasi harus spesifik lokasi/aktivitas (mis. kerja di ketinggian, pengelasan, penggalian, listrik, crane).\n   - Jika ada pelanggaran dari dokumen, sebutkan klausul/pasal rujukan.\n\nFORMAT KELUARAN DEFAULT (maks 10 bullet agar nyaman di Telegram):\n1) **Jawaban Utama / Ringkasan**\n2) **Dasar Dokumen & Sitasi** (jika ada)\n3) **Temuan Kunci / Metrik** (untuk progres)\n4) **Rekomendasi Prioritas** (maks 3 butir, actionable)\n5) **Catatan** (batasan/kebutuhan data tambahan bila relevan)\n\nATURAN SITASI & KUALITAS\n- Gunakan nama dokumen resmi + bagian yang spesifik. Jika halaman/section tersedia dalam metadata, tampilkan.\n- Jika beberapa dokumen bertentangan, jelaskan perbedaannya secara netral dan dahulukan hierarki regulasi (UU > PP > Permen/Kepmen > Standar Teknis > Kontrak internal).\n- Jangan membuat sitasi palsu. Lebih baik kosong daripada salah.\n\nKESALAMATAN & DISKLAMER\n- Untuk isu keselamatan yang mendesak, sarankan tindakan mitigasi segera (contoh: hentikan pekerjaan, lakukan toolbox meeting, inspeksi peralatan) dengan dasar dokumen bila ada.\n- Anda bukan penasihat hukum; keluaran bersifat informasi teknis/operasional.\n\nKENDALI OUTPUT\n- Jika pertanyaan sangat umum, batasi jawaban ke 5\u20138 poin terpenting dan akhiri dengan saran kata kunci lanjutan (tanpa mengajukan pertanyaan).\n- Jika konteks dokumen tidak memadai, tampilkan \u201cTidak ditemukan di dokumen yang tersedia.\u201d dan sebutkan data/informasi apa yang belum ada (mis. \u201ckurva-S mingguan\u201d atau \u201cGCC Sub-Clause 14.x\u201d).\n\n"
+        }
+      },
+      "id": "ccb29622-49b2-4ae2-8b6a-7303a327e3e7",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -512,
+        -320
+      ],
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "name": "company_documents_tool",
+        "description": "Retrieve information from any company documents"
+      },
+      "id": "28055fad-f012-49e0-ac29-dda7d91f9f5a",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "position": [
+        -272,
+        -48
+      ],
+      "typeVersion": 1
+    },
+@@ -362,87 +365,141 @@
+      ],
+      "typeVersion": 2,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "id": "b5b180eb-1b43-4051-93de-116b29153968",
+      "name": "Telegram Send",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        48,
+        -304
+      ],
+      "typeVersion": 1,
+      "webhookId": "32c83958-4d86-4bb1-8557-ff1c9901080b",
+      "credentials": {
+        "telegramApi": {
+          "id": "BoynTQNRCbtFIUG8",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$binary.data.mimeType}}",
+              "operation": "equal",
+              "value2": "application/pdf"
+            }
+          ],
+          "number": [
+            {
+              "value1": "={{($json.text || $json.data?.[0]?.pageContent || '').length}}",
+              "operation": "larger",
+              "value2": "200"
+            }
+          ]
+        }
+      },
+      "id": "8ff1af2b-95ca-4325-9580-58a740a6e93d",
+      "name": "Check PDF Content",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -80,
+        -912
+      ],
+      "typeVersion": 1,
+      "notes": "Validates PDF mime type and minimum extracted text length before embedding."
+    },
+    {
+      "parameters": {
+        "operation": "documentTextDetection",
+        "additionalFields": {
+          "features": [
+            {
+              "type": "DOCUMENT_TEXT_DETECTION"
+            }
+          ],
+          "binaryPropertyName": "data"
+        }
+      },
+      "id": "69aeb013-ac07-4fc7-b716-226c2b196adb",
+      "name": "Google Cloud Vision OCR",
+      "type": "n8n-nodes-base.googleCloudVision",
+      "position": [
+        128,
+        -1104
+      ],
+      "typeVersion": 1,
+      "notes": "Runs OCR for PDFs when direct extraction fails. Configure credentials and options as needed."
+    },
+    {
+      "parameters": {
+        "functionCode": "return items.map(item => {\n  const text = item.json.responses?.[0]?.fullTextAnnotation?.text || '';\n  return {\n    json: {\n      text,\n      data: text ? [{ pageContent: text, metadata: item.json.data?.[0]?.metadata || {} }] : [],\n    },\n    binary: item.binary,\n  };\n});"
+      },
+      "id": "6b52be6b-d9d2-423d-a41a-2c17b997a9d7",
+      "name": "Format OCR Result",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        320,
+        -944
+      ],
+      "typeVersion": 2,
+      "notes": "Normalizes OCR output into LangChain document format."
   ],
   "pinData": {},
   "connections": {
@@ -410,17 +593,7 @@
         ]
       ]
     },
-    "Default Data Loader": {
-      "ai_document": [
-        [
-          {
-            "node": "Pinecone Vector Store",
-            "type": "ai_document",
-            "index": 0
-          }
-        ]
-      ]
-    },
+
     "Window Buffer Memory": {
       "ai_memory": [
         [
@@ -436,7 +609,7 @@
       "ai_embedding": [
         [
           {
-            "node": "Pinecone Vector Store",
+           "node": "PDF Data Loader",
             "type": "ai_embedding",
             "index": 0
           }
@@ -499,11 +672,25 @@
       ]
     },
     "Recursive Character Text Splitter": {
-      "ai_textSplitter": [
+   "main": [
         [
           {
-            "node": "Default Data Loader",
-            "type": "ai_textSplitter",
+            "node": "Embeddings Google Gemini",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ],
+      "ai_document": [
+        [
+          {
+                "node": "Pinecone Vector Store",
+            "type": "ai_document",
             "index": 0
           }
         ]
@@ -558,6 +745,57 @@
         [
           {
             "node": "Telegram Send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+      },
+    "PDF Data Loader": {
+      "main": [
+        [
+          {
+            "node": "Check PDF Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check PDF Content": {
+      "main": [
+        [
+          {
+            "node": "Recursive Character Text Splitter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Cloud Vision OCR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Cloud Vision OCR": {
+      "main": [
+        [
+          {
+            "node": "Format OCR Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format OCR Result": {
+      "main": [
+        [
+          {
+            "node": "Recursive Character Text Splitter",
             "type": "main",
             "index": 0
           }
